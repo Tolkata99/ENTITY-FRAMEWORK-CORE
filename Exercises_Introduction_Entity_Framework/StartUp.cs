@@ -2,15 +2,16 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Exercises_Introduction_Entity_Framework
 {
     public class StartUp
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            SoftUniContext sofContex = new SoftUniContext();
-            Console.WriteLine(GetEmployeesFromResearchAndDevelopment(sofContex));
+            using SoftUniContext sofContex = new SoftUniContext();
+            Console.WriteLine(await AddNewAddressToEmployee(sofContex));
         }
 
         public static string GetEmployeesFromResearchAndDevelopment(SoftUniContext context)
@@ -20,8 +21,15 @@ namespace Exercises_Introduction_Entity_Framework
             var dptEmployee = context
                 .Employees
                 .Where(e => e.Department.Name == "Research and Development")
+                .Select(n => new
+                {
+                    n.FirstName,
+                    n.Salary,
+                    n.LastName,
+                    n.Department.Name
+                })
                 .OrderBy(e => e.Salary)
-                .OrderByDescending(f => f.FirstName)
+                .ThenByDescending(f => f.FirstName)
                 .ToArray();
 
             foreach (var dptEmpl in dptEmployee)
@@ -29,7 +37,7 @@ namespace Exercises_Introduction_Entity_Framework
                 sb.AppendLine($"{dptEmpl.FirstName} {dptEmpl.LastName} from Research and Development - ${dptEmpl.Salary:F2}");
             }
 
-            return sb.ToString();
+            return sb.ToString().TrimEnd();
         }
 
         public static string GetEmployeesWithSalaryOver50000(SoftUniContext context)
@@ -78,6 +86,42 @@ namespace Exercises_Introduction_Entity_Framework
 
             return sb.ToString();
                 
+        }
+
+        public static async Task<string> AddNewAddressToEmployee(SoftUniContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+           
+            Address adress = new Address()
+            {
+                AddressText = "Vitoshka 15",
+                TownId = 4
+            };
+            context.Addresses.Add(adress);
+
+            Employee nakov = context
+                .Employees
+                .FirstOrDefault(c => c.LastName == "Nakov");
+
+            nakov.Address = adress;
+           await context.SaveChangesAsync();
+
+
+            string[] allEmpl = context
+                .Employees
+                .OrderByDescending(n => n.AddressId)
+                .Take(10)
+                .Select(e => e.Address.AddressText)
+                .ToArray();
+
+            foreach (var empl in allEmpl)
+            {
+               
+                sb.AppendLine(empl);
+            }
+
+            return sb.ToString();
+
         }
     }
 
