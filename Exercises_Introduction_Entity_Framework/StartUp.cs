@@ -10,10 +10,10 @@ namespace Exercises_Introduction_Entity_Framework
     {
         public static void Main(string[] args)
         {
-            using(var dbContext = new SoftUniContext())
+            using (var dbContext = new SoftUniContext())
             {
                 SoftUniContext context = new SoftUniContext();
-                Console.WriteLine(GetEmployee147(context));
+                Console.WriteLine(DeleteProjectById(context));
             }
         }
 
@@ -57,7 +57,7 @@ namespace Exercises_Introduction_Entity_Framework
                 .Where(e => e.Salary > 50000)
                 .OrderBy(e => e.FirstName)
                 .ToArray();
-                
+
             foreach (var employee in employees)
             {
                 sb.AppendLine($"{employee.FirstName} - {employee.Salary:F2}");
@@ -72,7 +72,7 @@ namespace Exercises_Introduction_Entity_Framework
 
             var allEmployees = context
                 .Employees
-                .Select(e=> new
+                .Select(e => new
                 {
                     e.FirstName,
                     e.MiddleName,
@@ -88,13 +88,13 @@ namespace Exercises_Introduction_Entity_Framework
             }
 
             return sb.ToString();
-                
+
         }
 
         public static async Task<string> AddNewAddressToEmployee(SoftUniContext context)
         {
             StringBuilder sb = new StringBuilder();
-           
+
             Address adress = new Address()
             {
                 AddressText = "Vitoshka 15",
@@ -107,7 +107,7 @@ namespace Exercises_Introduction_Entity_Framework
                 .FirstOrDefault(c => c.LastName == "Nakov");
 
             nakov.Address = adress;
-           await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
 
             string[] allEmpl = context
@@ -119,7 +119,7 @@ namespace Exercises_Introduction_Entity_Framework
 
             foreach (var empl in allEmpl)
             {
-               
+
                 sb.AppendLine(empl);
             }
 
@@ -191,7 +191,7 @@ namespace Exercises_Introduction_Entity_Framework
                 .Addresses
                 .OrderByDescending(a => a.Employees.Count)
                 .ThenBy(a => a.TownId)
-                .ThenBy(at=>at.AddressText)
+                .ThenBy(at => at.AddressText)
                 .Take(10)
                 .Select(s => new
                 {
@@ -216,7 +216,7 @@ namespace Exercises_Introduction_Entity_Framework
 
             var employee = context
                 .Employees
-                .Where(y=>y.EmployeeId == 147)
+                .Where(y => y.EmployeeId == 147)
                 .Select(t => new
                 {
                     t.FirstName,
@@ -230,7 +230,7 @@ namespace Exercises_Introduction_Entity_Framework
                 })
                 .First();
 
-          
+
 
 
 
@@ -244,7 +244,155 @@ namespace Exercises_Introduction_Entity_Framework
             return sb.ToString().TrimEnd();
 
         }
+
+        //Problem 10
+        public static string GetDepartmentsWithMoreThan5Employees(SoftUniContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var departments = context
+                .Departments
+                .Where(e => e.Employees.Count > 5)
+                .OrderBy(e => e.Employees.Count)
+                .ThenByDescending(da => da.Name)
+                .Select(d => new
+                {
+                    DepartmName = d.Name,
+                    ManagerNameFirst = d.Manager.FirstName,
+                    ManagerNameLast = d.Manager.LastName,
+                    EmployeeInfo = d.Employees.Select(e => new
+                    {
+                        e.FirstName,
+                        e.LastName,
+                        e.JobTitle
+                    })
+                                                .OrderBy(d => d.FirstName)
+                                                .ThenBy(d => d.LastName)
+                                                .ToArray()
+                });
+
+
+            foreach (var dp in departments)
+            {
+                sb.AppendLine($"{dp.DepartmName} - {dp.ManagerNameFirst}  {dp.ManagerNameLast}");
+
+                foreach (var empl in dp.EmployeeInfo)
+                {
+                    sb.AppendLine($"{empl.FirstName} {empl.LastName} - {empl.JobTitle}");
+                }
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //Problem 11 
+        public static string GetLatestProjects(SoftUniContext context)
+        {
+            StringBuilder result = new StringBuilder();
+
+            var projects = context.Projects.OrderByDescending(p => p.StartDate).Take(10).Select(s => new
+            {
+                ProjectName = s.Name,
+                ProjectDescription = s.Description,
+                ProjectStartDate = s.StartDate
+            }).OrderBy(n => n.ProjectName).ToArray();
+
+            foreach (var p in projects)
+            {
+                var startDate = p.ProjectStartDate.ToString("M/d/yyyy h:mm:ss tt");
+                result.AppendLine($"{p.ProjectName}");
+                result.AppendLine($"{p.ProjectDescription}");
+                result.AppendLine($"{startDate}");
+            }
+            return result.ToString().TrimEnd();
+        }
+
+        //Problem 12
+        public static string IncreaseSalaries(SoftUniContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+            var depar = context
+                .Employees
+                .Where(d => d.Department.Name == "Engineering"
+                        || d.Department.Name == "Tool Design"
+                        || d.Department.Name == "Marketing"
+                        || d.Department.Name == "Information Services")
+                .OrderBy(e => e.FirstName)
+                .ThenBy(e => e.LastName)
+                .ToList();
+
+            foreach (var e in depar)
+            {
+                var n = e.Salary * 1.12M;
+                e.Salary = n;
+                context.SaveChangesAsync();
+            }
+
+            foreach (var emplpoyee in depar)
+            {
+                sb.AppendLine($"{emplpoyee.FirstName} {emplpoyee.LastName} (${emplpoyee.Salary:f2})");
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //Problem 13
+        public static string GetEmployeesByFirstNameStartingWithSa(SoftUniContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var empl = context
+                .Employees
+                .Where(e => e.FirstName.StartsWith("Sa"))
+                .Select(e => new
+                {
+                    e.FirstName,
+                    e.LastName,
+                    e.JobTitle,
+                    e.Salary
+                })
+                .OrderBy(e => e.FirstName)
+                .ThenBy(e => e.LastName)
+                .ToArray();
+
+            foreach (var e in empl)
+            {
+                var sal = e.Salary;
+                var job = e.JobTitle;
+                sb.AppendLine($"{e.FirstName} {e.LastName} - {job} - ({sal:f2})");
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //Problem 14
+        public static string DeleteProjectById(SoftUniContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+            Project projToDelete = context
+                .Projects
+                .Find(2);
+
+            EmployeeProject[] emplToDelete = context
+                .Projects
+                .Where(ep => ep.ProjectId == projToDelete.ProjectId)
+                .ToArray();
+
+            context.EmployeesProjects.RemoveRange(emplToDelete);
+            context.Projects.Remove(projToDelete);
+            context.SaveChanges();
+
+            string[] projectNames = context
+                .Projects
+                .Take(10)
+                .Select(p => p.Name)
+                .ToArray();
+
+            foreach (var p in projectNames)
+            {
+                sb.AppendLine(p);
+            }
+            return sb.ToString();
+        }
     }
-
-
 }
