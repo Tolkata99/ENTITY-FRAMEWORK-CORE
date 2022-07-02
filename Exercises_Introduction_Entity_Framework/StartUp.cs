@@ -8,10 +8,10 @@ namespace Exercises_Introduction_Entity_Framework
 {
     public class StartUp
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             using SoftUniContext sofContex = new SoftUniContext();
-            Console.WriteLine(await AddNewAddressToEmployee(sofContex));
+            Console.WriteLine(GetEmployeesInPeriod(sofContex));
         }
 
         public static string GetEmployeesFromResearchAndDevelopment(SoftUniContext context)
@@ -122,6 +122,60 @@ namespace Exercises_Introduction_Entity_Framework
 
             return sb.ToString();
 
+        }
+
+        //Problem 7
+
+        public static string GetEmployeesInPeriod(SoftUniContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var employees = context
+                .Employees
+                .Where(e => e.EmployeesProjects.Any(ep => ep.Project.StartDate.Year >= 2001
+                                                       && ep.Project.StartDate.Year <= 2003))
+                .Take(10)
+                .Select(e => new
+                {
+                    e.FirstName,
+                    e.LastName,
+                    ManagerFirstName = e.Manager.FirstName,
+                    ManagerLastName = e.Manager.LastName,
+                    AllProjects = e.EmployeesProjects
+                                   .Select(ep => new
+                                   {
+                                       ProjectName = ep.Project.Name,
+                                       ProjectStart = ep
+                                                       .Project
+                                                       .StartDate
+                                                       .ToString("M/d/yyyy h:mm:ss tt"),
+                                       ProjectEnd = ep
+                                                       .Project
+                                                       .EndDate
+                                                       .HasValue ? ep
+                                                                     .Project
+                                                                     .EndDate
+                                                                     .Value
+                                                                     .ToString("M/d/yyyy h:mm:ss tt") : "not finished"
+                                   })
+                                   .ToArray()
+
+                })
+                .ToArray();
+
+            foreach (var emplWitManager in employees)
+            {
+                sb.AppendLine($"{emplWitManager.FirstName} {emplWitManager.LastName} - Manager: " +
+                    $"{emplWitManager.ManagerFirstName} {emplWitManager.ManagerLastName} ");
+
+                foreach (var projects in emplWitManager.AllProjects)
+                {
+                    sb.AppendLine($"-- {projects.ProjectName} - {projects.ProjectStart} - {projects.ProjectEnd} ");
+                }
+
+            }
+
+            return sb.ToString().TrimEnd();
         }
     }
 
