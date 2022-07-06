@@ -1,0 +1,10 @@
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\bin\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.deps.json
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\bin\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.dll
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\bin\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.pdb
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.csproj.AssemblyReference.cache
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.AssemblyInfoInputs.cache
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.AssemblyInfo.cs
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.csproj.CoreCompileInputs.cache
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.dll
+C:\Users\kulib\Documents\GitHub\ENTITY-FRAMEWORK-CORE\Entity Relations\P03_FootballBetting.Data.Common\obj\Debug\netcoreapp3.1\P03_FootballBetting.Data.Common.pdb
