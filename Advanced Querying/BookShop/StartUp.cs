@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using BookShop.Models;
 using BookShop.Models.Enums;
+using Castle.Core.Internal;
 using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Microsoft.VisualBasic;
+using Z.EntityFramework.Plus;
 
 namespace BookShop
 {
@@ -15,9 +18,71 @@ namespace BookShop
         public static void Main()
         {
             using var db = new BookShopContext();
-            Console.WriteLine(GetTotalProfitByCategory(db));
+            IncreasePrices(db);
         }
 
+        //15 with BULK
+        public static void IncreasePricesWithBULK(BookShopContext context)
+        {
+            context
+                .Books
+                .Where(b => b.ReleaseDate.Value.Year < 2010)
+                .Update(e => new Book(){Price = e.Price + 5});
+        }
+
+
+        //15
+            public static void IncreasePrices(BookShopContext context)
+        {
+            IQueryable<Book> bookPrices = context
+                .Books
+                .Where(b => b.ReleaseDate.Value.Year < 2010);
+               
+
+            foreach (var price in bookPrices)
+            {
+                price.Price += 5;
+            }
+        }
+
+        //14
+        public static string GetMostRecentBooks(BookShopContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+            var categories = context
+                .Categories
+                .Select(c => new
+                {
+                    c.Name,
+                    MostRecentBooks = c.CategoryBooks
+                        .OrderByDescending(cb => cb.Book.ReleaseDate.Value)
+                        .Select(cb => new
+                        {
+                            BookTitle = cb.Book.Title,
+                            BookReleaseYear = cb.Book.ReleaseDate.Value.Year
+                        })
+                        .Take(3)
+                        .ToArray()
+                })
+                .OrderBy(n => n.Name)
+                .ToArray();
+
+            foreach (var nameYearTitle in categories)
+            {
+                sb.AppendLine(nameYearTitle.Name);
+
+                foreach (var titBookYear in nameYearTitle.MostRecentBooks)
+                {
+                    sb.AppendLine($"{titBookYear.BookTitle} ({titBookYear.BookReleaseYear})");
+                }
+            }
+
+            return sb.ToString().TrimEnd();
+
+
+        }
+
+        //12
         public static string GetTotalProfitByCategory(BookShopContext context)
         {
            
