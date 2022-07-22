@@ -20,10 +20,38 @@ namespace CarDealer
 
             //Console.WriteLine("Database successfully created!");
 
-            string xmlInput = File.ReadAllText(@"../../../Datasets\suppliers.xml");
-           
-            Console.WriteLine(ImportSuppliers(dbContext, xmlInput));
+            string xmlInput = File.ReadAllText(@"../../../Datasets\parts.xml");
 
+            Console.WriteLine(ImportParts(dbContext, xmlInput));
+
+        }
+
+        public static string ImportParts(CarDealerContext context, string inputXml)
+        {
+            XmlRootAttribute root = new XmlRootAttribute("Parts");
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ImportPartsDto[]), root);
+
+            using StringReader reader = new StringReader(inputXml);
+            ImportPartsDto[] partsDtos = (ImportPartsDto[])xmlSerializer
+                .Deserialize(reader);
+
+            var supplier = context.Suppliers.Select(e=>e.Id).ToArray();
+
+            Part[] parts = partsDtos
+                .Where(e => supplier.Contains(e.SupplierId))
+                .Select(dto => new Part()
+                {
+                    Name = dto.Name,
+                    Price = dto.Price,
+                    Quantity = dto.Quantity,
+                    SupplierId = dto.SupplierId,
+                })
+                .ToArray();
+
+            context.Parts.AddRange(parts);
+            context.SaveChanges();
+
+            return $"Successfully imported {parts.Length}";
         }
 
         public static string ImportSuppliers(CarDealerContext context, string inputXml)
@@ -32,10 +60,9 @@ namespace CarDealer
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(ImportSupplierDto[]), root);
 
             using StringReader reader = new StringReader(inputXml);
-          
-            var supplierDtos = (ImportSupplierDto[])xmlSerializer
+            ImportSupplierDto[] supplierDtos = (ImportSupplierDto[])xmlSerializer
                  .Deserialize(reader);
-            
+
 
             Supplier[] suppliers = supplierDtos
                 .Select(Dto => new Supplier()
