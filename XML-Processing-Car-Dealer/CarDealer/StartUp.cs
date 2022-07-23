@@ -49,11 +49,13 @@ namespace CarDealer
                 .ToArray();
 
             XmlRootAttribute root = new XmlRootAttribute("cars");
+            XmlSerializerNamespaces nameSpace = new XmlSerializerNamespaces();
+            nameSpace.Add(string.Empty, string.Empty);
             XmlSerializer xmlDeSerializer = new XmlSerializer(typeof(ExportCarWithDistanceDto[]), root);
 
             using StringWriter writer = new StringWriter(sb);
 
-            xmlDeSerializer.Serialize(writer, exportCarDistanceDto);
+            xmlDeSerializer.Serialize(writer, exportCarDistanceDto, nameSpace);
 
 
             return sb.ToString().TrimEnd();
