@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Channels;
 using System.Xml.Serialization;
@@ -20,10 +21,55 @@ namespace CarDealer
 
             //Console.WriteLine("Database successfully created!");
 
-            string xmlInput = File.ReadAllText(@"../../../Datasets\parts.xml");
+            string xmlInput = File.ReadAllText(@"../../../Datasets\cars.xml");
 
-            Console.WriteLine(ImportParts(dbContext, xmlInput));
+            Console.WriteLine(ImportCars(dbContext, xmlInput));
 
+        }
+
+        public static string ImportCars(CarDealerContext context, string inputXml)
+        {
+            XmlRootAttribute root = new XmlRootAttribute("Cars");
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ImportCarsDto[]), root);
+
+            using StringReader reader = new StringReader(inputXml);
+            ImportCarsDto[] carDtos = (ImportCarsDto[])xmlSerializer
+                .Deserialize(reader);
+
+            ICollection<Car> cars = new List<Car>();
+            foreach (var dto in carDtos)
+            {
+                Car car = new Car()
+                {
+                    Make = dto.Make,
+                    Model = dto.Model,
+                    TravelledDistance = dto.TraveledDistance
+                };
+
+                ICollection<PartCar> carPart = new List<PartCar>();
+                var dtos = dto.Parts.Select(p=>p.Id).Distinct();
+                foreach (var partId in dtos)
+                {
+                    if (!context.Parts.Any(p => p.Id == partId))
+                    {
+                        continue;
+                    }
+
+                    carPart.Add(new PartCar()
+                    {
+                        Car = car,
+                        PartId = partId
+                    });
+                }
+
+                car.PartCars = carPart;
+                cars.Add(car);
+            }
+
+            context.Cars.AddRange(cars);
+            context.SaveChanges();
+
+            return $"Successfully imported {cars.Count}"; ;
         }
 
         public static string ImportParts(CarDealerContext context, string inputXml)
@@ -35,7 +81,7 @@ namespace CarDealer
             ImportPartsDto[] partsDtos = (ImportPartsDto[])xmlSerializer
                 .Deserialize(reader);
 
-            var supplier = context.Suppliers.Select(e=>e.Id).ToArray();
+            var supplier = context.Suppliers.Select(e => e.Id).ToArray();
 
             Part[] parts = partsDtos
                 .Where(e => supplier.Contains(e.SupplierId))
