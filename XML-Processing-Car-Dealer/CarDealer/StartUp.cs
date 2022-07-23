@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Channels;
 using System.Xml.Serialization;
+using CarDealer.Dtos.Export;
 using CarDealer.Dtos.Import;
 using CarDealer.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -21,12 +23,44 @@ namespace CarDealer
 
             //Console.WriteLine("Database successfully created!");
 
-            string xmlInput = File.ReadAllText(@"../../../Datasets\sales.xml");
+            //string xmlInput = File.ReadAllText(@"../../../Datasets\sales.xml");
 
-            Console.WriteLine(ImportSales(dbContext, xmlInput));
+            Console.WriteLine(GetCarsWithDistance(dbContext));
 
         }
+        //Export
 
+        public static string GetCarsWithDistance(CarDealerContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            ExportCarWithDistanceDto[] exportCarDistanceDto = context
+                .Cars
+                .Where(c => c.TravelledDistance > 2000000)
+                .OrderBy(m => m.Make)
+                .ThenBy(m => m.Model)
+                .Take(10)
+                .Select(dto => new ExportCarWithDistanceDto()
+                {
+                    Model = dto.Model,
+                    Make = dto.Make,
+                    TravelledDistance = dto.TravelledDistance
+                })
+                .ToArray();
+
+            XmlRootAttribute root = new XmlRootAttribute("cars");
+            XmlSerializer xmlDeSerializer = new XmlSerializer(typeof(ExportCarWithDistanceDto[]), root);
+
+            using StringWriter writer = new StringWriter(sb);
+
+            xmlDeSerializer.Serialize(writer, exportCarDistanceDto);
+
+
+            return sb.ToString().TrimEnd();
+        }
+        //Export
+
+        //Import
         public static string ImportSales(CarDealerContext context, string inputXml)
         {
             XmlRootAttribute root = new XmlRootAttribute("Sales");
@@ -185,5 +219,6 @@ namespace CarDealer
 
             return $"Successfully imported {suppliers.Length}";
         }
+        //Import
     }
 }
