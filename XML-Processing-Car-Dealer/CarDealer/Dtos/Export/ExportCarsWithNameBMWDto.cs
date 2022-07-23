@@ -5,11 +5,16 @@ using System.Xml.Serialization;
 
 namespace CarDealer.Dtos.Export
 {
-    [XmlType("cars")]
-    class ExportCarsWithNameBMWDto
+    [XmlType("car")]
+    public class ExportCarsWithNameBMWDto
     {
-        public int CarId { get; set; }
+        [XmlAttribute("id")]
+        public int Id { get; set; }
 
-        public mo Type { get; set; }
+        [XmlAttribute("model")]
+        public string Model { get; set; }
+
+        [XmlAttribute("travelled-distance")]
+        public long TravelledDistance { get; set; }
     }
 }

@@ -25,16 +25,49 @@ namespace CarDealer
 
             //string xmlInput = File.ReadAllText(@"../../../Datasets\sales.xml");
 
-            Console.WriteLine(GetCarsFromMakeBmw(dbContext));
+            Console.WriteLine(GetLocalSuppliers(dbContext));
 
         }
         //Export
+        public static string GetLocalSuppliers(CarDealerContext context)
+        {
+            ExportLocalSupliersDto[] localSupliers = context
+                .Suppliers
+                .Where(s => !s.IsImporter)
+                .Select(dto => new ExportLocalSupliersDto()
+                {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    PartsCount = dto.Parts.Count
+                })
+                .ToArray();
+            string rootName = "supliers";
+            var result = Serialize(localSupliers,rootName);
+
+
+
+            return result;
+        }
         public static string GetCarsFromMakeBmw(CarDealerContext context)
         {
+            string rootName = "cars";
 
+            ExportCarsWithNameBMWDto[] BMWdtos = context
+                .Cars
+                .Where(c => c.Make == "BMW")
+                .OrderBy(m => m.Model)
+                .ThenByDescending(t => t.TravelledDistance)
+                .Select(dto => new ExportCarsWithNameBMWDto()
+                {
+                    Id = dto.Id,
+                    Model = dto.Model,
+                    TravelledDistance = dto.TravelledDistance
+                })
+                .ToArray();
 
+            var result = Serialize(BMWdtos, rootName);
 
-            return "";
+            return result;
         }
         public static string GetCarsWithDistance(CarDealerContext context)
         {
@@ -68,7 +101,7 @@ namespace CarDealer
         }
 
         //Helper method
-        private static string Serialize<T>(T dto,string rootName)
+        public static string Serialize<T>(T dto,string rootName)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -85,17 +118,24 @@ namespace CarDealer
 
             return sb.ToString().TrimEnd();
         }
+
+        public static T Deserialize<T>(string inputXml, string rootName)
+        {
+            XmlRootAttribute root = new XmlRootAttribute(rootName);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), root);
+
+            using StringReader reader = new StringReader(inputXml); //using?
+            T dto = (T)xmlSerializer
+                .Deserialize(reader);
+
+            return dto;
+        }
         //Export
 
         //Import
         public static string ImportSales(CarDealerContext context, string inputXml)
         {
-            XmlRootAttribute root = new XmlRootAttribute("Sales");
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ImportSalesDto[]), root);
-
-            StringReader reader = new StringReader(inputXml); //using?
-            ImportSalesDto[] salesDtos = (ImportSalesDto[])xmlSerializer
-                .Deserialize(reader);
+            var salesDtos = Deserialize<ImportSalesDto[]>(inputXml, "Sales");
 
             ICollection<Sale> sales = new List<Sale>();
 
