@@ -25,11 +25,17 @@ namespace CarDealer
 
             //string xmlInput = File.ReadAllText(@"../../../Datasets\sales.xml");
 
-            Console.WriteLine(GetCarsWithDistance(dbContext));
+            Console.WriteLine(GetCarsFromMakeBmw(dbContext));
 
         }
         //Export
+        public static string GetCarsFromMakeBmw(CarDealerContext context)
+        {
 
+
+
+            return "";
+        }
         public static string GetCarsWithDistance(CarDealerContext context)
         {
             StringBuilder sb = new StringBuilder();
@@ -56,6 +62,25 @@ namespace CarDealer
             using StringWriter writer = new StringWriter(sb);
 
             xmlDeSerializer.Serialize(writer, exportCarDistanceDto, nameSpace);
+
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //Helper method
+        private static string Serialize<T>(T dto,string rootName)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            XmlRootAttribute root = new XmlRootAttribute(rootName);
+
+            XmlSerializerNamespaces nameSpace = new XmlSerializerNamespaces();
+            nameSpace.Add(string.Empty, string.Empty);
+
+            XmlSerializer xmlDeSerializer = new XmlSerializer(typeof(T), root);
+
+            using StringWriter writer = new StringWriter(sb);
+            xmlDeSerializer.Serialize(writer, dto, nameSpace);
 
 
             return sb.ToString().TrimEnd();
