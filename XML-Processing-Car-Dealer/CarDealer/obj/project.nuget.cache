@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JGonQz+lp9Uv4Ko1LWPh4iuyacHtklB90qsWuVJN+NFaOSRjIpnnOrRqoCPjYL5dgzbY1LByFMk/ohkpX4Uf1w==",
+  "dgSpecHash": "pt6dPoH4NHeq54e9uEdBNpEXq/mDqHbsZKIojyhLEVRx+CpEu8eCWApgZolMbVjHF7ntlg+lwLh4Gnd+x3GcwQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kulib\\Documents\\GitHub\\ENTITY-FRAMEWORK-CORE\\09. XML-Processing-Car-Dealer-Skeleton OLD\\CarDealer\\CarDealer.csproj",
+  "projectFilePath": "C:\\Users\\kulib\\Documents\\GitHub\\ENTITY-FRAMEWORK-CORE\\XML-Processing-Car-Dealer\\CarDealer\\CarDealer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kulib\\.nuget\\packages\\automapper\\9.0.0\\automapper.9.0.0.nupkg.sha512",
     "C:\\Users\\kulib\\.nuget\\packages\\castle.core\\4.4.0\\castle.core.4.4.0.nupkg.sha512",
