@@ -1,7 +1,7 @@
 ﻿namespace TeisterMask.Data
 {
     using Microsoft.EntityFrameworkCore;
-
+    using AutoMapper;
     using Models;
 
     public class TeisterMaskContext : DbContext
@@ -24,7 +24,8 @@
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder
-                    .UseSqlServer(Configuration.ConnectionString);
+                    .UseSqlServer(Configuration.ConnectionString)
+                    ;
             }
         }
 

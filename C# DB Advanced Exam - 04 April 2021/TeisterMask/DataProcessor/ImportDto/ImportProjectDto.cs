@@ -1,4 +1,8 @@
-﻿namespace TeisterMask.DataProcessor.ImportDto
+﻿using System;
+using Microsoft.VisualBasic;
+using TeisterMask.Data.Models.Enums;
+
+namespace TeisterMask.DataProcessor.ImportDto
 {
     using System.Xml.Serialization;
 
@@ -6,17 +10,18 @@
 
     using Shared;
 
+   
     [XmlType("Project")]
     public class ImportProjectDto
     {
-        [Required]
-        [MinLength(GlobalConstants.ProjectNameMinLength)]
-        [MaxLength(GlobalConstants.ProjectNameMaxLength)]
         [XmlElement("Name")]
+        [Required]
+        [MaxLength(GlobalConstants.ProjectNameMaxLength)]
+        [MinLength(GlobalConstants.ProjectNameMinLength)]
         public string Name { get; set; }
 
-        [Required]
         [XmlElement("OpenDate")]
+        [Required]
         public string OpenDate { get; set; }
 
         [XmlElement("DueDate")]
@@ -24,5 +29,6 @@
 
         [XmlArray("Tasks")]
         public ImportProjectTasksDto[] Tasks { get; set; }
+
     }
 }

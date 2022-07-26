@@ -6,29 +6,31 @@
 
     using Shared;
 
+
     [XmlType("Task")]
     public class ImportProjectTasksDto
     {
-        [Required]
-        [MinLength(GlobalConstants.TaskNameMinLength)]
-        [MaxLength(GlobalConstants.ProjectNameMaxLength)]
         [XmlElement("Name")]
+        [MaxLength(GlobalConstants.TaskNameMaxLength)]
+        [MinLength(GlobalConstants.TaskNameMinLength)]
         public string Name { get; set; }
 
-        [Required]
         [XmlElement("OpenDate")]
-        public string OpenDate { get; set; }
-
         [Required]
+        public string TaskOpenDate { get; set; }
+
         [XmlElement("DueDate")]
-        public string DueDate { get; set; }
+        [Required]
+        public string TaskDueDate { get; set; }
 
         [XmlElement("ExecutionType")]
-        [Range(0, 3)]
+        [Range(GlobalConstants.TaskExecutionTypeMinLenght, GlobalConstants.TaskExecutionTypeMaxLenght)]
         public int ExecutionType { get; set; }
 
         [XmlElement("LabelType")]
-        [Range(0, 4)]
+        [Range(GlobalConstants.TaskLabelTypeMinLenght, GlobalConstants.TaskLabelTypeMaxLenght)]
         public int LabelType { get; set; }
+
+
     }
 }
