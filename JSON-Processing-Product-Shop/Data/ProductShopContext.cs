@@ -28,7 +28,7 @@
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Server=TOLKATA;Database=ProductShop1;Integrated Security=True");
+                optionsBuilder.UseSqlServer(Configuration.ConnectionString);
             }
         }
 

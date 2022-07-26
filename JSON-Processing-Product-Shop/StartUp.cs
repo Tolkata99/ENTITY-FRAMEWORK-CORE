@@ -17,9 +17,7 @@ namespace ProductShop
         public static void Main(string[] args)
         {
             var context = new ProductShopContext();
-
-            context.Database.EnsureCreated();
-            context.Database.EnsureDeleted();
+            
 
             var usersJsonAsString = File
                 .ReadAllText("../../../Datasets/users.json");
@@ -35,7 +33,7 @@ namespace ProductShop
 
 
 
-            Console.WriteLine(GetProductsInRange(context));
+            Console.WriteLine(ImportProducts(context, productsJsonString));
         }
 
         public static string GetProductsInRange(ProductShopContext context)

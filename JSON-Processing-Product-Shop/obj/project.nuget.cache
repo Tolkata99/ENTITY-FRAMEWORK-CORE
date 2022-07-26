@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RDYndPPPDWy4Mez7nlKqrb0btOTfFAyCTvGKpl9uXSo6HD0Vd4wc1Z45axa20iKltHH4ONen4wZP1U6d8ZGCdg==",
+  "dgSpecHash": "NqizS5rtKDW2E31ctHPUmzscbxnSE/vXXOdUELxaaST0d9tzlBL0Y4Bcj57gHN0NwDWNH2LlxtrDK8w93faVEA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kulib\\Downloads\\Submission_28104542\\ProductShop.csproj",
+  "projectFilePath": "C:\\Users\\kulib\\Documents\\GitHub\\ENTITY-FRAMEWORK-CORE\\JSON-Processing-Product-Shop\\ProductShop.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kulib\\.nuget\\packages\\automapper\\7.0.1\\automapper.7.0.1.nupkg.sha512",
     "C:\\Users\\kulib\\.nuget\\packages\\castle.core\\4.2.1\\castle.core.4.2.1.nupkg.sha512",
