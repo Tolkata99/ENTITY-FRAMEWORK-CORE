@@ -17,7 +17,7 @@
 
             Mapper.Initialize(cfg => cfg.AddProfile<TeisterMaskProfile>());
 
-            ResetDatabase(context, shouldDropDatabase: true);
+            ResetDatabase(context, shouldDropDatabase: false);
 
             var projectDir = GetProjectDirectory();
 
@@ -31,7 +31,7 @@
             }
         }
 
-        private static void ImportEntities(TeisterMaskContext context,string baseDir, string exportDir)
+        private static void ImportEntities(TeisterMaskContext context, string baseDir, string exportDir)
         {
             var projects =
                 DataProcessor.Deserializer.ImportProjects(context,

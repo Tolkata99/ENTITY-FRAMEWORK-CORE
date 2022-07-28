@@ -24,6 +24,7 @@
         public string Email { get; set; }
 
         [Required]
+        [MaxLength(GlobalConstants.EmployeePhoneMaxLength)]
         public string Phone { get; set; }
 
         public ICollection<EmployeeTask> EmployeesTasks { get; set; }

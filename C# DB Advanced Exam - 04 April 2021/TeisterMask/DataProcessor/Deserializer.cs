@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using TeisterMask.Data.Models;
 using TeisterMask.Data.Models.Enums;
 using TeisterMask.DataProcessor.ImportDto;
@@ -133,7 +134,7 @@ namespace TeisterMask.DataProcessor
                         DueDate = dueTaskDate,
                         ExecutionType = (ExecutionType)taskDto.ExecutionType,
                         LabelType = (LabelType)taskDto.LabelType,
-                        Project = p
+                        //Project = p
                     };
 
                     projectTasks.Add(t);
@@ -157,7 +158,62 @@ namespace TeisterMask.DataProcessor
 
         public static string ImportEmployees(TeisterMaskContext context, string jsonString)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            ImportEmployeeDto[] employeeDtos =
+                JsonConvert.DeserializeObject<ImportEmployeeDto[]>(jsonString);
+
+            HashSet<Employee> validEmpoyees = new HashSet<Employee>();
+            foreach (ImportEmployeeDto employeeDto in employeeDtos)
+            {
+                if (!IsValid(employeeDto))
+                {
+                    sb.AppendLine(ErrorMessage);
+                    continue;
+                    
+                }
+
+                Employee e = new Employee()
+                {
+                    Username = employeeDto.Username,
+                    Email = employeeDto.Email,
+                    Phone = employeeDto.Phone
+                };
+
+                HashSet<EmployeeTask> employeeTasks = new HashSet<EmployeeTask>();
+                foreach (int taskId in employeeDto.Tasks.Distinct())
+                {
+                    Task task = context
+                        .Tasks
+                        .Find(taskId);
+
+                    if (task == null)
+                    {
+                        sb.AppendLine(ErrorMessage);
+                        continue;
+                    }
+
+                    EmployeeTask emplTask = new EmployeeTask()
+                    {
+                        Employee = e,
+                        TaskId = taskId
+
+                    };
+
+                    employeeTasks.Add(emplTask);
+                }
+
+                e.EmployeesTasks = employeeTasks;
+                validEmpoyees.Add(e);
+
+                sb.AppendLine(String.Format(SuccessfullyImportedEmployee, e.Username,
+                    employeeTasks.Count));
+            }
+
+            context.Employees.AddRange(validEmpoyees);
+            context.SaveChanges();
+
+            return sb.ToString().TrimEnd();
+
         }
 
         private static bool IsValid(object dto)
